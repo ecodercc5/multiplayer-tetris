@@ -1,0 +1,10 @@
+
+###
+POST http://localhost:8000/api/users
+Content-Type: application/json
+
+{
+    "username": "Eric Chen",
+    "joined": 1642897820257
+}
+
