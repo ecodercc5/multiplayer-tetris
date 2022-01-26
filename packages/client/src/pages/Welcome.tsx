@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import { socket } from "../web-socket";
 
-type Props = {};
+interface Props {}
+
+socket.on("connect", () => console.log("Connected"));
 
 export const Welcome: React.FC<Props> = () => {
-  return <div>welcome</div>;
+  const [username, setUsername] = useState("");
+
+  const handleSubmit = () => {
+    socket.emit("user:create", { username });
+  };
+
+  return (
+    <div>
+      <input value={username} onChange={(e) => setUsername(e.target.value)} />
+      <button onClick={handleSubmit}>Create User</button>
+    </div>
+  );
 };

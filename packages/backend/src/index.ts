@@ -9,6 +9,7 @@ import http from "http";
 import { api } from "./api/index";
 import cors from "cors";
 import { connectToRedis, redisClient } from "./redis";
+import { registerUserHandlers } from "./web-sockets/user";
 
 const PORT = process.env.PORT || 8000;
 
@@ -52,6 +53,8 @@ const startServer = async () => {
 
       socket.emit("hello-response");
     });
+
+    registerUserHandlers(io, socket);
   });
 
   // do not use app here, use httpServer

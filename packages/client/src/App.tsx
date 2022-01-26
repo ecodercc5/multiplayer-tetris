@@ -1,16 +1,16 @@
 import { Route, Routes } from "react-router-dom";
 import { Welcome, Game } from "./pages";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8000");
+// const socket = io("http://localhost:8000");
 
-socket.on("connect", () => {
-  console.log(socket.id);
-});
+// socket.on("connect", () => {
+//   console.log(socket.id);
+// });
 
-socket.emit("hello");
+// socket.emit("hello");
 
-socket.on("hello-response", () => console.log("[hello response]"));
+// socket.on("hello-response", () => console.log("[hello response]"));
 
 function App() {
   return (

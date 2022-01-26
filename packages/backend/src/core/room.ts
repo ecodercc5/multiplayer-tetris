@@ -24,4 +24,11 @@ export namespace Room {
       };
     });
   };
+
+  export const addSpectator = (room: IRoom, spectatorId: string): IRoom => {
+    return {
+      ...room,
+      spectators: [...room.spectators, spectatorId],
+    };
+  };
 }
