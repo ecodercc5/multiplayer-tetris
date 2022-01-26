@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { User } from "../core/user";
-import { userRedisRepository } from "../models/user";
+import { redisClient } from "../redis";
 
 const router = Router();
 
@@ -15,19 +15,25 @@ router.post("/", async (req, res) => {
   const { username, joined } = req.body as ICreateUserRequestBody;
 
   // check if username already exists
+  const key = `user:${username}`;
+
+  // get user json string from redis
+  const userJSON = await redisClient.sendCommand(["JSON.GET", key, "$"]);
+
+  // check if user exists
+  if (userJSON) {
+    return res.status(400).json({ message: "Username taken" });
+  }
 
   // create user
   const user = User.create({ username, joined });
-  const userData: any = { ...user, joined: user.joined.getTime() };
+  const userData = { ...user, joined: user.joined.getTime() };
 
-  console.log(userData);
+  const userKey = `user:${userData.username}`;
+  const userJSONStr = JSON.stringify(userData);
 
-  const userModel = userRedisRepository.createEntity(userData);
-
-  console.log(userModel);
-
-  // save user to redis
-  await userRedisRepository.save(userModel);
+  // set user in redis -> sendCommand
+  await redisClient.sendCommand(["JSON.SET", userKey, "$", userJSONStr]);
 
   return res.json({
     data: {
@@ -36,6 +42,16 @@ router.post("/", async (req, res) => {
   });
 });
 
-router.delete("");
+router.delete("/:username", async (req, res) => {
+  const username = req.params.username;
+
+  console.log({ username });
+
+  const key = `user:${username}`;
+
+  await redisClient.sendCommand(["JSON.DEL", key]);
+
+  return res.sendStatus(204);
+});
 
 export { router };

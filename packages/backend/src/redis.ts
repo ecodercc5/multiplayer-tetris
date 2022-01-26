@@ -1,11 +1,13 @@
-import { Client } from "redis-om";
+import { createClient } from "redis";
 
-export const redisClient = new Client();
+const REDIS_URL = process.env.REDIS_URL as string;
 
-export const connectToRedis = async (url: string) => {
-  // check if redis client is opne
-  if (!redisClient.isOpen()) {
-    // connect to redis
-    await redisClient.open(url);
-  }
+export const redisClient = createClient({ url: REDIS_URL });
+
+type RedisClient = typeof redisClient;
+
+redisClient.on("error", (err) => console.error(err));
+
+export const connectToRedis = (client: RedisClient) => {
+  return client.connect();
 };

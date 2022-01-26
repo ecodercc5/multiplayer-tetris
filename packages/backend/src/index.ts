@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 import http from "http";
 import { api } from "./api/index";
 import cors from "cors";
-import { connectToRedis } from "./redis";
+import { connectToRedis, redisClient } from "./redis";
 
 const PORT = process.env.PORT || 8000;
 
@@ -31,10 +31,7 @@ const startServer = async () => {
   });
 
   // connect to redis client
-  const REDIS_URL = process.env.REDIS_URL as string;
-  console.log({ REDIS_URL });
-
-  await connectToRedis(REDIS_URL);
+  await connectToRedis(redisClient);
 
   app.get("/", (req, res) => {
     console.log("Yo");
@@ -62,3 +59,7 @@ const startServer = async () => {
 };
 
 startServer();
+
+// adding user
+// removing user
+// challenging another user

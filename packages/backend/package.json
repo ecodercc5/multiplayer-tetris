@@ -35,8 +35,7 @@
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "nanoid": "^3.2.0",
-    "node-redis": "^0.1.7",
-    "redis-om": "^0.1.7",
+    "redis": "^4.0.2",
     "socket.io": "^4.4.1"
   }
 }
