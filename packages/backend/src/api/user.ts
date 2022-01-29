@@ -4,42 +4,53 @@ import { redisClient } from "../redis";
 
 const router = Router();
 
-interface ICreateUserRequestBody {
-  username: string;
-  joined: number;
-}
+router.get("/", async (req, res) => {
+  console.log("[getting users]");
 
-router.post("/", async (req, res) => {
-  console.log("Creating user");
+  // i'm doing this the stupid way for now -> this is completely unsafe
+  // sending username in the header for auth -> use jwt later
+  const username = req.header("user");
 
-  const { username, joined } = req.body as ICreateUserRequestBody;
+  // console.log({ username });
 
-  // check if username already exists
-  const key = `user:${username}`;
+  try {
+    // get all user keys -> highly unscalable I know
+    const userKeys = await redisClient.keys("user:*");
 
-  // get user json string from redis
-  const userJSON = await redisClient.sendCommand(["JSON.GET", key, "$"]);
+    // current user key
+    const userKey = `user:${username}`;
 
-  // check if user exists
-  if (userJSON) {
-    return res.status(400).json({ message: "Username taken" });
+    // filter the keys to exclude the current user
+    const filterUserKeys = userKeys.filter((key) => key !== userKey);
+
+    // get all the users -> $ means get all the contents inside the json
+    const usersData = await redisClient.sendCommand([
+      "JSON.MGET",
+      ...filterUserKeys,
+      "$",
+    ]);
+
+    // console.log(usersData);
+
+    // console.log("[yur]");
+
+    // console.log(typeof usersData);
+    // console.log(JSON.parse(usersData?.toString()));
+
+    // console.log((usersData?.valueOf() as Array<any>).length);
+
+    const usersDataStrArray = usersData?.valueOf() as string[];
+
+    const parsedUserData = usersDataStrArray.map((data) => JSON.parse(data)[0]);
+
+    // console.log(parsedUserData);
+
+    return res.json({ users: parsedUserData });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({ message: "Something went wrong bozo" });
   }
-
-  // create user
-  const user = User.create({ username, joined });
-  const userData = { ...user, joined: user.joined.getTime() };
-
-  const userKey = `user:${userData.username}`;
-  const userJSONStr = JSON.stringify(userData);
-
-  // set user in redis -> sendCommand
-  await redisClient.sendCommand(["JSON.SET", userKey, "$", userJSONStr]);
-
-  return res.json({
-    data: {
-      user,
-    },
-  });
 });
 
 router.delete("/:username", async (req, res) => {

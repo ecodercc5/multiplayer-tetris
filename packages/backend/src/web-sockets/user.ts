@@ -40,5 +40,19 @@ export const registerUserHandlers = (
 
     // set user in redis -> sendCommand
     await redisClient.sendCommand(["JSON.SET", userKey, "$", userJSONStr]);
+
+    socket.emit("user:created", userData);
+
+    socket.broadcast.emit("user:added", userData);
+  });
+
+  socket.on("user:delete", async (username: string) => {
+    console.log("[deleting user]");
+
+    const userKey = `user:${username}`;
+
+    await redisClient.sendCommand(["JSON.DEL", userKey]);
+
+    socket.broadcast.emit("user:deleted", username);
   });
 };

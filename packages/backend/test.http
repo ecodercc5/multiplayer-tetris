@@ -1,12 +1,8 @@
 
 ###
-POST http://localhost:8000/api/users
-Content-Type: application/json
+GET http://localhost:8000/api/users
+user: eric
 
-{
-    "username": "Eric_Chen",
-    "joined": 1642897820257
-}
 
 ### 
 DELETE http://localhost:8000/api/users/Eric_Chen

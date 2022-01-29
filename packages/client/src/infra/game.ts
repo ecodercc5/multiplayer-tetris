@@ -49,35 +49,9 @@ export class Tetris {
     // starting the game
     this._state$.next(startGameState);
 
-    // game loop
-    // this._gameLoop = window.setInterval(() => {
-    //   const state = start ? startGameState : this._state$.value;
-    //   const nextFrame = TetrisGame.next(state, this._shapeGenerator, {
-    //     shapeGenerator: this._shapeGenerator,
-    //     scoring: () => 20,
-    //     level: (totalRowsRemoved) => totalRowsRemoved,
-    //   });
-    //   // i++;
-
-    //   // console.log(toString(nextFrame.tetrisBoard));
-
-    //   if (nextFrame.isGameOver) {
-    //     this.pause();
-    //   }
-
-    //   if (i === 14) {
-    //     this.pause();
-    //   }
-
-    //   if (start) {
-    //     start = false;
-    //   }
-
-    //   this._state$.next(nextFrame);
-    // }, 1000);
-
     this.markUpdated();
 
+    // game loop
     const runGameLoop = () => {
       // console.log("yur");
       const secondsPerMove = 1 / this._state$.value.speed;
