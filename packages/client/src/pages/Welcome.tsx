@@ -10,15 +10,21 @@ socket.on("connect", () => console.log("Connected"));
 
 export const Welcome: React.FC<Props> = () => {
   const [username, setUsername] = useState("");
-  const { user, actions } = useUser();
+  const { user, userModule } = useUser();
   const usersState = useObservableState(users.state);
 
   useEffect(() => {
-    users.getUsers();
-  }, []);
+    if (user) {
+      users.getUsers();
+    }
+  }, [user]);
 
   const handleSubmit = () => {
-    actions.createUser(username);
+    userModule.create(username);
+  };
+
+  const handleChallenge = (username: string) => {
+    socket.emit("user:challenge", username);
   };
 
   return (
@@ -37,7 +43,17 @@ export const Welcome: React.FC<Props> = () => {
         <>
           <h2>user: {user?.username}</h2>
           {usersState.map((user) => {
-            return <div key={user._id}>{user.username}</div>;
+            return (
+              <div key={user._id}>
+                <span>
+                  {user.username}
+
+                  <button onClick={() => handleChallenge(user.username)}>
+                    Challenge
+                  </button>
+                </span>
+              </div>
+            );
           })}
         </>
       )}

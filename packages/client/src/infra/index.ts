@@ -1,4 +1,6 @@
 import { socket } from "../web-socket";
-import { Users } from "./users";
+import { UserModule } from "./user";
+import { UsersModule } from "./users";
 
-export const users = new Users(socket);
+export const userModule = new UserModule(socket);
+export const users = new UsersModule(socket);

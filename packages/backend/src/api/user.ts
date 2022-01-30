@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { User } from "../core/user";
 import { redisClient } from "../redis";
 
 const router = Router();
@@ -22,6 +21,10 @@ router.get("/", async (req, res) => {
 
     // filter the keys to exclude the current user
     const filterUserKeys = userKeys.filter((key) => key !== userKey);
+
+    if (filterUserKeys.length === 0) {
+      return res.json({ users: [] });
+    }
 
     // get all the users -> $ means get all the contents inside the json
     const usersData = await redisClient.sendCommand([
