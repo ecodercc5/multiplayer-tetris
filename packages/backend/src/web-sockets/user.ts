@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { Room } from "../core/room";
 import { User } from "../core/user";
+import { UserReadyState } from "../core/userReadyState";
 import { redisClient } from "../redis";
 import { userRepo } from "../repos";
 
@@ -126,11 +127,46 @@ export const registerUserHandlers = (
       return;
     }
 
+    const challengerReadyState = UserReadyState.create(currentUser);
+    const otherReadyState = UserReadyState.create(userChallenged);
+
     const room = Room.create({
-      users: { challenger: currentUser, other: userChallenged },
+      users: { challenger: challengerReadyState, other: otherReadyState },
     });
 
     console.log(room);
+
+    const roomKey = `room:${room._id}`;
+    const roomJSONStr = JSON.stringify(room);
+
+    await redisClient.sendCommand(["JSON.SET", roomKey, "$", roomJSONStr]);
+
+    const socketIds = [challengerReadyState.socketId, otherReadyState.socketId];
+
+    const roomId = room._id;
+
+    socketIds.forEach((socketId) => {
+      console.log(`[joing room: ${roomId}]`);
+      io.in(socketId).socketsJoin(roomId);
+    });
+
+    const roomDTO = {
+      ...room,
+      users: {
+        challenger: {
+          ...room.users.challenger,
+          joined: room.users.challenger.joined.getTime(),
+        },
+        other: {
+          ...room.users.other,
+          joined: room.users.other.joined.getTime(),
+        },
+      },
+    };
+
+    console.log(roomDTO);
+
+    io.to(roomId).emit("room:joined", roomDTO);
   });
 
   socket.on("user:delete", async (username: string) => {

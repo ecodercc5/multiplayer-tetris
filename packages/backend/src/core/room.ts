@@ -1,10 +1,11 @@
 import { Entity, IEntity } from "./entity";
 import { IUser } from "./user";
+import { IUserReadyState } from "./userReadyState";
 
 export interface IRoom extends IEntity {
   users: {
-    challenger: IUser;
-    other: IUser;
+    challenger: IUserReadyState;
+    other: IUserReadyState;
   };
   spectators: string[];
 }
@@ -14,7 +15,7 @@ export namespace Room {
     users,
     spectators = [],
   }: {
-    users: { challenger: IUser; other: IUser };
+    users: { challenger: IUserReadyState; other: IUserReadyState };
     spectators?: string[];
   }): IRoom => {
     return Entity.createAndExtend((base) => {
