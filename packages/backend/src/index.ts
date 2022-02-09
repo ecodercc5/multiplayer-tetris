@@ -10,6 +10,7 @@ import { api } from "./api/index";
 import cors from "cors";
 import { connectToRedis, redisClient } from "./redis";
 import { registerUserHandlers } from "./web-sockets/user";
+import { registerGameHandler } from "./web-sockets/game";
 
 const PORT = process.env.PORT || 8000;
 
@@ -55,6 +56,7 @@ const startServer = async () => {
     });
 
     registerUserHandlers(io, socket);
+    registerGameHandler(io, socket);
   });
 
   // do not use app here, use httpServer

@@ -5,4 +5,5 @@ import { UsersModule } from "./users";
 
 export const userModule = new UserModule(socket);
 export const users = new UsersModule(socket);
-export const room = new RoomModule(socket);
+
+export const room = new RoomModule(socket, userModule);

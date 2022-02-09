@@ -1,12 +1,8 @@
 import { Entity, IEntity } from "./entity";
-import { IUser } from "./user";
-import { IUserReadyState } from "./userReadyState";
+import { IUserGameState } from "./userReadyState";
 
 export interface IRoom extends IEntity {
-  users: {
-    challenger: IUserReadyState;
-    other: IUserReadyState;
-  };
+  users: IUserGameState[];
   spectators: string[];
 }
 
@@ -15,7 +11,7 @@ export namespace Room {
     users,
     spectators = [],
   }: {
-    users: { challenger: IUserReadyState; other: IUserReadyState };
+    users: IUserGameState[];
     spectators?: string[];
   }): IRoom => {
     return Entity.createAndExtend((base) => {
@@ -31,6 +27,31 @@ export namespace Room {
     return {
       ...room,
       spectators: [...room.spectators, spectatorId],
+    };
+  };
+
+  export const setUserReady = (room: IRoom, userId: string): IRoom => {
+    const users = room.users;
+    const user = users.find((usr) => usr._id === userId);
+
+    if (!user) {
+      return room;
+    }
+
+    const newUsers = users.map((usr) => {
+      if (usr === user) {
+        return {
+          ...usr,
+          isReady: true,
+        };
+      }
+
+      return usr;
+    });
+
+    return {
+      ...room,
+      users: newUsers,
     };
   };
 }

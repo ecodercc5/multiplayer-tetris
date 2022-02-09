@@ -3,6 +3,7 @@ import { useObservableState } from "../hooks/use-observable-state";
 import { room, users } from "../infra";
 import { useUser } from "../providers/UserProvider";
 import { socket } from "../web-socket";
+import { useNavigate } from "react-router-dom";
 
 interface Props {}
 
@@ -13,6 +14,14 @@ export const Welcome: React.FC<Props> = () => {
   const { user, userModule } = useUser();
   const roomState = useObservableState(room.state);
   const usersState = useObservableState(users.state);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (roomState.isInRoom) {
+      navigate("/gameroom");
+    }
+  }, [roomState.isInRoom, navigate]);
 
   useEffect(() => {
     if (user) {
