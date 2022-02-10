@@ -45,6 +45,34 @@ interface ITetrisGameConfig {
 }
 
 export namespace TetrisGame {
+  export const createEmptyGame = (): ITetrisGame => {
+    const tetrisBoard = createTetrisBoard(createEmptyBoard(6, 8));
+    const nextShape = createShape({
+      color: "green",
+      position: { row: null, col: null },
+      struct: [
+        [true, true],
+        [true, true],
+      ],
+    });
+
+    return {
+      isGameOver: false,
+      isPaused: true,
+      tetrisBoard,
+      nextShape,
+      level: 0,
+      _moves: 0,
+      _totalRowsRemoved: 0,
+      speed: 1 / 1000, // 1 move per 1000ms or 1 second
+      score: 0,
+      time: {
+        lastStart: null,
+        lastElapsed: 0,
+      },
+    };
+  };
+
   export const createGame = (
     tetrisBoard: ITetrisBoard,
     nextShape: IShape

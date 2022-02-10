@@ -2,6 +2,7 @@ import { IUser } from "./user";
 
 export interface IUserGameState extends IUser {
   isReady: boolean;
+  gameInit: boolean;
 }
 
 export namespace UserGameState {
@@ -12,6 +13,7 @@ export namespace UserGameState {
     return {
       ...user,
       isReady,
+      gameInit: false,
     };
   };
 
@@ -21,6 +23,13 @@ export namespace UserGameState {
     return {
       ...userReadyState,
       isReady: true,
+    };
+  };
+
+  export const gameInit = (userGameState: IUserGameState): IUserGameState => {
+    return {
+      ...userGameState,
+      gameInit: true,
     };
   };
 }

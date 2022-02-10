@@ -35,4 +35,30 @@ export const registerGameHandler = (
 
     socket.to(room._id).emit("room:opponent_ready", roomWithUserReady);
   });
+
+  socket.on("game:init", () => {
+    // could abstract this away
+    const user = socket.user;
+    const room = socket.room;
+
+    if (!user || !room) {
+      return;
+    }
+
+    console.log("game:init");
+    console.log(user);
+
+    const lockedRoom = Room.lock(room);
+
+    const opponent = room.users.find((usr) => usr._id !== user._id)!;
+    const opponentSocket = io.sockets.sockets.get(opponent?.socketId)!;
+
+    opponentSocket.room = lockedRoom;
+
+    // set user init as ready
+    const newRoom = Room.gameInit(room, user._id);
+
+    console.log("new:room");
+    console.log(newRoom);
+  });
 };

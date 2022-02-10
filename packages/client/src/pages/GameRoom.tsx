@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { map } from "rxjs";
+import { Game } from "../components/Game";
 import { useObservableState } from "../hooks/use-observable-state";
 import { room } from "../infra";
 import { useUser } from "../providers/UserProvider";
@@ -35,7 +36,7 @@ export const GameRoom = () => {
   return (
     <div>
       {areBothUsersReady ? (
-        <div>game</div>
+        <Game />
       ) : (
         <>
           <pre>{JSON.stringify(roomState, null, 4)}</pre>

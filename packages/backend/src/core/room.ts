@@ -1,9 +1,10 @@
 import { Entity, IEntity } from "./entity";
-import { IUserGameState } from "./userReadyState";
+import { IUserGameState, UserGameState } from "./userReadyState";
 
 export interface IRoom extends IEntity {
   users: IUserGameState[];
   spectators: string[];
+  _locked: boolean;
 }
 
 export namespace Room {
@@ -19,8 +20,16 @@ export namespace Room {
         ...base,
         users,
         spectators,
+        _locked: false,
       };
     });
+  };
+
+  export const lock = (room: IRoom): IRoom => {
+    return {
+      ...room,
+      _locked: true,
+    };
   };
 
   export const addSpectator = (room: IRoom, spectatorId: string): IRoom => {
@@ -30,7 +39,11 @@ export namespace Room {
     };
   };
 
-  export const setUserReady = (room: IRoom, userId: string): IRoom => {
+  const setUserState = (
+    room: IRoom,
+    userId: string,
+    setter: (user: IUserGameState) => IUserGameState
+  ): IRoom => {
     const users = room.users;
     const user = users.find((usr) => usr._id === userId);
 
@@ -40,10 +53,7 @@ export namespace Room {
 
     const newUsers = users.map((usr) => {
       if (usr === user) {
-        return {
-          ...usr,
-          isReady: true,
-        };
+        return setter(usr);
       }
 
       return usr;
@@ -53,5 +63,32 @@ export namespace Room {
       ...room,
       users: newUsers,
     };
+  };
+
+  export const setUserReady = (room: IRoom, userId: string): IRoom => {
+    return setUserState(room, userId, (user) => UserGameState.setIsReady(user));
+    // const users = room.users;
+    // const user = users.find((usr) => usr._id === userId);
+
+    // if (!user) {
+    //   return room;
+    // }
+
+    // const newUsers = users.map((usr) => {
+    //   if (usr === user) {
+    //     return UserGameState.setIsReady(usr);
+    //   }
+
+    //   return usr;
+    // });
+
+    // return {
+    //   ...room,
+    //   users: newUsers,
+    // };
+  };
+
+  export const gameInit = (room: IRoom, userId: string) => {
+    return setUserState(room, userId, (user) => UserGameState.gameInit(user));
   };
 }
