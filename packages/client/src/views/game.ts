@@ -1,10 +1,64 @@
 import { distinctUntilChanged, map, Observable, Subscriber } from "rxjs";
 import { IBoard } from "../core/board";
-import { TetrisGame } from "../core/game";
+import { ITetrisGame, TetrisGame } from "../core/game";
 import { Unit } from "../core/unit";
 import { TetrisState } from "../infra/game";
 
 export namespace TetrisView {
+  export const getGameView = (tetrisState: TetrisState) => {
+    return tetrisState.pipe(
+      map((state): ITetrisGame => {
+        // TODO: refactor this later — literally copied and pasted this shit
+        const activeShape = state.tetrisBoard.activeShape;
+
+        const board = state.tetrisBoard.board.map((row, i) =>
+          row.map((unit, j) => {
+            const isActive = Unit.isFilled(unit);
+            let containsShape: boolean = false;
+
+            if (activeShape) {
+              const { row, col } = activeShape.position;
+
+              const maxX = row! + activeShape.struct.length - 1;
+              const maxY = col! + activeShape.struct[0].length - 1;
+
+              if (i >= row! && i <= maxX && j >= col! && j <= maxY) {
+                const contains = activeShape.struct[i - row!][j - col!];
+
+                containsShape = contains;
+              }
+            }
+
+            // console.log(unit);
+
+            const isUnitOccupied = isActive || containsShape;
+            // const unitOccupied = unit.color
+            //   ? unit
+            //   : Unit.createUnit(activeShape!.color);
+
+            const repr = isUnitOccupied
+              ? unit.color
+                ? unit
+                : Unit.createUnit(activeShape?.color)
+              : unit;
+
+            return repr;
+          })
+        );
+
+        const newState: ITetrisGame = {
+          ...state,
+          tetrisBoard: {
+            ...state.tetrisBoard,
+            board,
+          },
+        };
+
+        return newState;
+      })
+    );
+  };
+
   export const getBoard = (tetrisState: TetrisState): Observable<IBoard> => {
     return tetrisState.pipe(
       map((state): IBoard => {

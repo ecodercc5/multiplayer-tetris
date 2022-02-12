@@ -91,10 +91,12 @@ export class Tetris {
         this.markUpdated();
       }
 
-      window.requestAnimationFrame(runGameLoop);
+      // window.requestAnimationFrame(runGameLoop);
     };
 
-    this._gameLoop = window.requestAnimationFrame(runGameLoop);
+    // this._gameLoop = window.requestAnimationFrame(runGameLoop);
+
+    this._gameLoop = window.setInterval(() => runGameLoop(), 1000 / 60);
   }
 
   pause() {

@@ -2,16 +2,17 @@ import React, { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Observable } from "rxjs";
 import { IBoard } from "../core/board";
+import { ITetrisGame } from "../core/game";
 import { useObservableState } from "../hooks/use-observable-state";
 import { Tetris } from "../infra/game";
 
 interface Props {
-  board$: Observable<IBoard>;
+  game: ITetrisGame;
   tetris: Tetris;
 }
 
-export const Board: React.FC<Props> = ({ board$, tetris }) => {
-  const boardView = useObservableState(board$);
+export const Board: React.FC<Props> = ({ game, tetris }) => {
+  const boardView = game.tetrisBoard.board;
 
   // only run if tetris is running: fix later
   useHotkeys("z, ctrl", () => tetris.rotateShapeLeft());

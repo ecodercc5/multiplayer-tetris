@@ -23,7 +23,7 @@ export const Game: React.FC<Props> = () => {
     <div className="App">
       <h1>Hello Javi</h1>
       {/* <pre>{JSON.stringify(game, null, 4)}</pre> */}
-      <Board board$={board$} tetris={tetris} />
+      {/* <Board board$={board$} tetris={tetris} /> */}
       <button onClick={() => tetris.start()}>Start</button>
       <button onClick={() => tetris.pause()}>Pause</button>
       <button onClick={() => tetris.reset()}>Reset</button>

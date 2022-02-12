@@ -38,6 +38,15 @@ export class RoomModule {
 
       this._roomState.next(roomState);
     });
+
+    this._socket.on("game:init", (room: any) => {
+      console.log("[on game init]");
+      console.log(room);
+
+      const roomState = { ...this._roomState.value, isInRoom: true, room };
+
+      this._roomState.next(roomState);
+    });
   }
 
   setIsReady() {

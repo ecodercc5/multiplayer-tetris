@@ -36,7 +36,7 @@ export const registerGameHandler = (
     socket.to(room._id).emit("room:opponent_ready", roomWithUserReady);
   });
 
-  socket.on("game:init", () => {
+  socket.on("game:init", async () => {
     // could abstract this away
     const user = socket.user;
     const room = socket.room;
@@ -48,17 +48,68 @@ export const registerGameHandler = (
     console.log("game:init");
     console.log(user);
 
-    const lockedRoom = Room.lock(room);
+    const roomKey = `room:${room._id}`;
 
-    const opponent = room.users.find((usr) => usr._id !== user._id)!;
-    const opponentSocket = io.sockets.sockets.get(opponent?.socketId)!;
+    attemptAndRetry(async () => {
+      return redisClient.executeIsolated(async (isolatedClient) => {
+        await isolatedClient.watch(roomKey);
 
-    opponentSocket.room = lockedRoom;
+        const currentRoom = await isolatedClient.sendCommand([
+          "JSON.GET",
+          roomKey,
+          "$",
+        ]);
 
-    // set user init as ready
-    const newRoom = Room.gameInit(room, user._id);
+        const multi = redisClient.multi();
 
-    console.log("new:room");
-    console.log(newRoom);
+        const currentRoomData = JSON.parse(currentRoom as string)[0];
+        const newRoom = Room.gameInit(currentRoomData, user._id);
+
+        console.log("getting current room");
+        console.log(currentRoomData);
+        console.log(newRoom);
+
+        // multi.json.SET(roomKey, "$", newRoomJSON);
+
+        multi.json.set(roomKey, "$", newRoom as any);
+
+        await multi.exec();
+
+        io.to(room._id).emit("game:init", newRoom);
+
+        const isEverybodyReady = Room.isAllPlayersReady(newRoom);
+
+        if (isEverybodyReady) {
+          io.to(room._id).emit("game:start");
+        }
+      });
+    });
   });
+
+  socket.on("game:update", (tetrisGame: any) => {
+    const user = socket.user;
+    const room = socket.room;
+
+    if (!user || !room) {
+      return;
+    }
+
+    console.log("[game:update]");
+
+    const roomId = room._id;
+
+    console.log(tetrisGame);
+
+    socket.broadcast.to(roomId).emit("game:update", tetrisGame);
+  });
+};
+
+const attemptAndRetry = async (func: Function) => {
+  try {
+    await func();
+  } catch {
+    setTimeout(() => {
+      attemptAndRetry(func);
+    }, 100);
+  }
 };
