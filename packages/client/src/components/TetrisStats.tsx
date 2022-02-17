@@ -24,7 +24,7 @@ const Row: React.FC<RowProps> = ({
 }) => {
   return (
     <div
-      className={`flex justify-between font-medium mb-2.5 ${className}`}
+      className={`flex justify-between font-medium mb-2.5  ${className}`}
       {...props}
     >
       <span className="inline-block text-neutral-400 flex items-center">
@@ -38,7 +38,10 @@ const Row: React.FC<RowProps> = ({
 
 export const TetrisStats: React.FC<Props> = () => {
   return (
-    <div className="py-3 px-3 bg-zinc-50 w-[230px] rounded-md text-sm">
+    <div
+      className="py-3 px-3 bg-zinc-50 w-[230px] rounded-md text-sm shadow-[0_2px_10px_0_rgba(0,0,0,0.1)] 
+                 border border-zinc-200"
+    >
       <span className="inline-block font-semibold text-zinc-900 mb-4">
         Your Stats
       </span>
