@@ -268,7 +268,7 @@ export namespace TetrisGame {
   };
 }
 
-const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(6, 8));
+const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(20, 10));
 
 const initShape = createShape({
   color: "blue",
@@ -279,7 +279,7 @@ const initShape = createShape({
   ],
 });
 
-const tetrisBoard = setShapeAtPosition(emptyTetrisBoard, initShape);
+export const tetrisBoard = setShapeAtPosition(emptyTetrisBoard, initShape);
 
 const shape = createShape({
   color: "#f4f4f4",
@@ -290,7 +290,7 @@ const shape = createShape({
   ],
 });
 
-// const tetrisGame = TetrisGame.createGame(tetrisBoard, shape);
+export const tetrisGame = TetrisGame.createGame(tetrisBoard, shape);
 
 // const nextFrame = TetrisGame.next(tetrisGame);
 
