@@ -61,7 +61,7 @@ export class Tetris {
       const shouldUpdate = nextUpdateTime <= now;
 
       if (shouldUpdate) {
-        console.log("yur");
+        // console.log("yur");
 
         const state = start ? startGameState : this._state$.value;
         const nextFrame = TetrisGame.next(state, {
@@ -72,7 +72,7 @@ export class Tetris {
         });
         // i++;
 
-        console.log(toString(nextFrame.tetrisBoard));
+        // console.log(toString(nextFrame.tetrisBoard));
 
         if (nextFrame.isGameOver) {
           this.pause();
@@ -181,7 +181,7 @@ export class Tetris {
 }
 
 // testing
-const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(6, 8));
+const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(20, 10));
 
 const initShape = createShape({
   color: "blue",

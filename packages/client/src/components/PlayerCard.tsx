@@ -1,9 +1,23 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { IUser } from "../core/user";
 import { Button } from "./Button";
 
-export const PlayerCard = () => {
+interface Props {
+  player: IUser;
+  onChallenge: (player: IUser) => any;
+}
+
+export const PlayerCard: React.FC<Props> = ({ player, onChallenge }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const joined = player.joined;
+  const hours24 = joined.getHours();
+  const hours = hours24 > 12 ? hours24 - 12 : hours24;
+  const timeOfDay = hours24 < 12 ? "am" : "pm";
+  const minutes = joined.getMinutes();
+
+  const time = `${hours}:${minutes}${timeOfDay}`;
 
   return (
     <motion.div
@@ -16,8 +30,10 @@ export const PlayerCard = () => {
       onHoverEnd={() => setIsHovered(false)}
     >
       <motion.div layout className="text-center m-auto">
-        <p className="text-lg font-semibold text-zinc-900 mb-0.5">Eric</p>
-        <p className="text-zinc-400 text-sm">Joined 2:30pm</p>
+        <p className="text-lg font-semibold text-zinc-900 mb-0.5">
+          {player.username}
+        </p>
+        <p className="text-zinc-400 text-sm">Joined {time}</p>
       </motion.div>
 
       {isHovered && (
@@ -26,6 +42,7 @@ export const PlayerCard = () => {
           initial={{ y: -4, opacity: 0.5 }}
           animate={{ y: 0, opacity: 1 }}
           whileHover={{ scale: 1.01 }}
+          onClick={() => onChallenge(player)}
         >
           Challenge
         </Button>

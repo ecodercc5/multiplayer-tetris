@@ -45,7 +45,7 @@ interface ICreateShapeArgs {
   position: IPosition;
 }
 
-export const createShape = (args: ICreateShapeArgs) => {
+export const createShape = (args: ICreateShapeArgs): IShape => {
   const { color, struct, position } = args;
 
   const _id = `${Math.random()}`;

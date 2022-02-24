@@ -144,7 +144,7 @@ export namespace TetrisGame {
         // const boardWithRowsRemoved
         newBoardd = removeFilledRows(newBoardd);
 
-        console.log(toString(newBoardd));
+        // console.log(toString(newBoardd));
       }
 
       // console.log({ newBoard });

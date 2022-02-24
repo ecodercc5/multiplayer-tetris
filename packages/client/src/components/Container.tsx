@@ -5,7 +5,7 @@ export const Container: React.FC<
 > = ({ children, className, ...props }) => {
   return (
     <div
-      className={`container max-w-screen-md mx-auto ${className}`}
+      className={`container max-w-screen-lg mx-auto ${className}`}
       {...props}
     >
       {children}

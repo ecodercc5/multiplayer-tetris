@@ -25,9 +25,14 @@ export const GameRoom = () => {
   }
 
   const isUserReady = userGameState.isReady;
+
   const areBothUsersReady = roomState.room.users.every(
     (usr: any) => usr.isReady
   );
+
+  if (areBothUsersReady) {
+    return <Navigate to="/game" />;
+  }
 
   if (!roomState.isInRoom) {
     return <Navigate to="/" />;

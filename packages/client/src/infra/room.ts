@@ -89,6 +89,10 @@ export class RoomModule {
     this._socket.emit("game:player_ready");
   }
 
+  clear() {
+    this._roomState.next({ isInRoom: false, room: null });
+  }
+
   get state() {
     return this._roomState;
   }

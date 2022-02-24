@@ -134,7 +134,7 @@ export const moveShape = (
   // console.log({ canFit });
 
   if (!canFit) {
-    console.log("[returning same shape]");
+    // console.log("[returning same shape]");
 
     return tetrisBoard;
   }
@@ -480,27 +480,3 @@ export const toString = (tetrisBoard: ITetrisBoard) => {
 
   return strRepr;
 };
-
-const board: IBoard = [
-  [{ color: "blue" }, { color: null }],
-  [{ color: null }, { color: "green" }],
-  [{ color: "blue" }, { color: "green" }],
-];
-// const tetrisBoard = createTetrisBoard(board);
-
-// const shape = createShape({
-//   color: "#f4f4f4",
-//   position: { row: 0, col: 1 },
-//   struct: [
-//     [false, true, false],
-//     [true, true, true],
-//   ],
-// });
-
-// const nextTetrisBoard = setShapeAtPosition(tetrisBoard, shape);
-
-// console.log(tetrisBoard);
-
-// // console.log(getRowIndexsFilled(tetrisBoard));
-
-// console.log(removeFilledRows(tetrisBoard));

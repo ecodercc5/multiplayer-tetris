@@ -13,7 +13,7 @@ import { socket } from "../web-socket";
 import { useObservableState } from "./use-observable-state";
 
 // refactor all of this later
-const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(6, 8));
+const emptyTetrisBoard = createTetrisBoard(createEmptyBoard(20, 10));
 
 const initShape = createShape({
   color: "blue",

@@ -8,6 +8,7 @@ import { Header } from "../components/Header";
 import { Container } from "../components/Container";
 import { Status } from "../components/Status";
 import { PlayerCard } from "../components/PlayerCard";
+import { IUser } from "../core/user";
 
 interface Props {}
 
@@ -20,6 +21,8 @@ export const Welcome: React.FC<Props> = () => {
   const usersState = useObservableState(users.state);
 
   const navigate = useNavigate();
+
+  const numPlayers = usersState.length;
 
   useEffect(() => {
     if (roomState.isInRoom) {
@@ -37,62 +40,60 @@ export const Welcome: React.FC<Props> = () => {
     userModule.create(username);
   };
 
-  const handleChallenge = (username: string) => {
+  const handleChallenge = (player: IUser) => {
+    console.log("on challenge");
+
+    const username = player.username;
+
+    console.log(username);
+
     socket.emit("user:challenge", username);
   };
+
+  console.log({ users: usersState });
 
   return (
     <div className="flex flex-col h-full">
       <Header />
 
-      <Container className="h-full">
-        <div className="flex flex-col items-center">
-          <span className="font-semibold text-2xl text-transparent bg-clip-text bg-gradient-to-br from-[#0080EE] to-[#00C7DD] ">
-            Players
-          </span>
-          <h1 className="font-bold text-4xl text-zinc-900 mt-1">
-            Find Someone To Play
-          </h1>
+      {!user && (
+        <>
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <button onClick={handleSubmit}>Create User</button>
+        </>
+      )}
 
-          <Status className="mt-5" name="10 Players Online" />
-        </div>
+      {user && (
+        <Container className="h-full">
+          {/* <h2>user: {user?.username}</h2> */}
 
-        <div className="pt-12">
-          <PlayerCard />
-        </div>
-        {/* {!user && (
-          <>
-            <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <button onClick={handleSubmit}>Create User</button>
-          </>
-        )}
+          <div className="flex flex-col items-center">
+            <span className="font-semibold text-2xl text-transparent bg-clip-text bg-gradient-to-br from-[#0080EE] to-[#00C7DD]">
+              Players
+            </span>
+            <h1 className="font-bold text-4xl text-zinc-900 mt-1">
+              Find Someone To Play
+            </h1>
 
-        {user && (
-          <>
-            <h2>user: {user?.username}</h2>
+            <Status className="mt-5" name={`${numPlayers} Players Online`} />
+          </div>
 
-            {!roomState.isInRoom &&
-              usersState.map((user) => {
-                return (
-                  <div key={user._id}>
-                    <span>
-                      {user.username}
-
-                      <button onClick={() => handleChallenge(user.username)}>
-                        Challenge
-                      </button>
-                    </span>
-                  </div>
-                );
-              })}
-
-            <pre>{JSON.stringify(roomState, null, 4)}</pre>
-          </>
-        )} */}
-      </Container>
+          <div className="pt-12">
+            {usersState.map((userState) => {
+              return (
+                <PlayerCard
+                  key={userState._id}
+                  player={userState}
+                  onChallenge={handleChallenge}
+                />
+              );
+            })}
+          </div>
+        </Container>
+      )}
     </div>
   );
 };

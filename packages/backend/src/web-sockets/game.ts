@@ -80,13 +80,14 @@ export const registerGameHandler = (
         const isEverybodyReady = Room.isAllPlayersReady(newRoom);
 
         if (isEverybodyReady) {
+          console.log("everybody is ready, starting game");
           io.to(room._id).emit("game:start");
         }
       });
     });
   });
 
-  socket.on("game:update", (tetrisGame: any) => {
+  socket.on("game:update", async (tetrisGame: any) => {
     const user = socket.user;
     const room = socket.room;
 
@@ -98,9 +99,22 @@ export const registerGameHandler = (
 
     const roomId = room._id;
 
-    console.log(tetrisGame);
-
     socket.broadcast.to(roomId).emit("game:update", tetrisGame);
+
+    if (tetrisGame.isGameOver) {
+      socket.to(roomId).emit("game:pause");
+
+      // emit game over to both players -> one won one lost
+      socket.emit("game:over", "loss");
+      socket.broadcast.to(roomId).emit("game:over", "win");
+
+      // delete the room
+      const roomKey = `room:${roomId}`;
+
+      await redisClient.sendCommand(["JSON.DEL", roomKey]);
+    }
+
+    console.log(tetrisGame);
   });
 };
 

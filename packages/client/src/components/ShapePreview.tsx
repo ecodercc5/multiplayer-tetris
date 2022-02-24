@@ -1,5 +1,5 @@
 import React from "react";
-import { createShape } from "../core/shape";
+import { createShape, IShape } from "../core/shape";
 import { Cell } from "./Cell";
 
 const initShape = createShape({
@@ -11,19 +11,24 @@ const initShape = createShape({
   ],
 });
 
-export const ShapePreview = () => {
+interface Props {
+  shape: IShape;
+}
+
+export const ShapePreview: React.FC<Props> = ({ shape }) => {
   return (
     <div className="flex flex-col">
-      {initShape.struct.map((row) => {
+      {shape.struct.map((row, i) => {
         return (
-          <span className="inline-block leading-[0px] mt-1 first:mt-[0px]">
-            {row.map((cell) => {
+          <span
+            key={i}
+            className="inline-block leading-[0px] mt-1 first:mt-[0px]"
+          >
+            {row.map((cell, j) => {
               const color = cell ? initShape.color : undefined;
               const isPlaceholder = !cell;
 
-              return (
-                <Cell placeholder={isPlaceholder} size="sm" color={color} />
-              );
+              return <Cell key={j} placeholder={isPlaceholder} color={color} />;
             })}
           </span>
         );

@@ -1,13 +1,8 @@
 import { PuzzleIcon, ChartBarIcon, ClockIcon } from "@heroicons/react/solid";
+import { ITetrisGame } from "../core/game";
 import { Cell } from "./Cell";
 import { Divider } from "./Divider";
 import { ShapePreview } from "./ShapePreview";
-
-interface Props
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {}
 
 interface RowProps
   extends React.DetailedHTMLProps<
@@ -40,7 +35,21 @@ const Row: React.FC<RowProps> = ({
   );
 };
 
-export const TetrisStats: React.FC<Props> = ({ className, ...props }) => {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
+  stats: ITetrisGame;
+}
+
+export const TetrisStats: React.FC<Props> = ({
+  className,
+  stats,
+  ...props
+}) => {
+  const { level, score, nextShape } = stats;
+
   return (
     <div
       className={`py-3 px-3 bg-zinc-50 bg-green w-[230px] rounded-md text-sm 
@@ -53,8 +62,8 @@ export const TetrisStats: React.FC<Props> = ({ className, ...props }) => {
       </span>
 
       <div className="mb-4">
-        <Row icon={PuzzleIcon} label="Level" value={1} />
-        <Row icon={ChartBarIcon} label="Score" value={200} />
+        <Row icon={PuzzleIcon} label="Level" value={level} />
+        <Row icon={ChartBarIcon} label="Score" value={score} />
         <Row icon={ClockIcon} label="Time" value="1:10" />
       </div>
 
@@ -64,7 +73,7 @@ export const TetrisStats: React.FC<Props> = ({ className, ...props }) => {
         Next Shape
       </span>
       <div className="flex justify-center items-center min-h-[100px]">
-        <ShapePreview />
+        <ShapePreview shape={nextShape} />
       </div>
     </div>
   );
